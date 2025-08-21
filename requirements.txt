@@ -1,0 +1,5 @@
+browser-use==0.5.11
+fastapi
+uvicorn[standard]
+python-dotenv
+requests
