@@ -12,9 +12,33 @@ class FormSubmissionRequest(BaseModel):
                 {
                     "account_id": "1086c0f3-973f-f011-b4cb-7c1e5218e4a2",
                     "custom_data": {
-                        "patient_name": "John Doe",
-                        "diagnosis": "Hypertension",
-                        "medication": "Lisinopril"
+                        "Member": {
+                            "ID_Number": 100123,
+                            "First_Name": "Michael",
+                            "Last_Name": "Anderson",
+                            "Date_of_Birth": "12031985",
+                            "Country": "United States",
+                            "Postal_Code": 75001,
+                            "Zip_Code": 75001
+                        },
+                        "Diagnosis": {
+                            "ICD10_Code": 10234,
+                            "Clinical_Rationale": "Chronic condition requiring continued management",
+                            "Previous_Therapies_Tried_and_Failed": "Medication A, Therapy B"
+                        },
+                        "Service": {
+                            "CPT_Code": 12122,
+                            "Description": "Physical therapy session",
+                            "Place_of_Service": "Outpatient",
+                            "Requested_Start_Date": "12022001",
+                            "Duration_in_Days": 12,
+                            "Priority": "Routine"
+                        },
+                        "Provider": {
+                            "Name": "Dr. Emily Carter",
+                            "NPI_Number": 1234567890,
+                            "Phone_Number": 5551234567
+                        }
                     }
                 }
             ]

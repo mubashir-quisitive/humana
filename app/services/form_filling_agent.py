@@ -12,35 +12,58 @@ controller = Controller()
 @controller.action('Upload file to form element')
 async def upload_file(index: int, browser_session: BrowserSession, file_type: str = "pdf"):
     """Upload file to specified element index"""
+    import os
+    import random
+    
     if file_type.lower() == "pdf":
-        file_path = Config.PDF_PATH
+        pdf_dir = Config.PDF_PATH
+        # Get all PDF files from temp directory
+        if os.path.exists(pdf_dir):
+            pdf_files = [f for f in os.listdir(pdf_dir) if f.lower().endswith('.pdf')]
+            if pdf_files:
+                # Randomly select a PDF file
+                selected_pdf = random.choice(pdf_files)
+                file_path = os.path.join(pdf_dir, selected_pdf)
+                logger.info(f"📄 Selected PDF file for upload: {selected_pdf}")
+            else:
+                return ActionResult(error='No PDF files found in temp directory')
+        else:
+            return ActionResult(error='PDF directory not found')
     else:
         file_path = Config.IMAGE_PATH
-    
+
     try:
         # Get the upload element by index
         upload_element = await browser_session.get_element_by_index(index)
         if upload_element is None:
             return ActionResult(error=f'No element found at index {index}')
-        
+
         # Get the current page using the correct browser-use API
         page = await browser_session.get_current_page()
-        
+
         # Set up file chooser handler before clicking
         async def handle_file_chooser(file_chooser):
-            await file_chooser.set_files(file_path)
-        
+            # Try to upload multiple files if multiple PDFs are available
+            if file_type.lower() == "pdf":
+                all_pdf_files = [os.path.join(pdf_dir, f) for f in pdf_files]
+                await file_chooser.set_files(all_pdf_files)
+            else:
+                await file_chooser.set_files(file_path)
+
         # Listen for file chooser events
         page.on('filechooser', handle_file_chooser)
-        
+
         # Click the upload button to trigger file chooser
         await upload_element.click()
-        
+
         # Wait a moment for the file to be selected
         import asyncio
         await asyncio.sleep(2)
-        
-        msg = f'Successfully initiated file upload for "{file_path}"'
+
+        if file_type.lower() == "pdf":
+            msg = f'Successfully initiated multiple PDF file upload: {len(pdf_files)} files'
+        else:
+            msg = f'Successfully initiated file upload for "{file_path}"'
         logger.success(msg)
         return ActionResult(extracted_content=msg)
     except Exception as e:

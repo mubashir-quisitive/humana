@@ -28,7 +28,7 @@ class Config:
     
     # File Upload Configuration
     IMAGE_PATH = os.getenv('IMAGE_PATH')
-    PDF_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'temp', 'short-stories-for-children.pdf')
+    PDF_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'temp')
     DOWNLOAD_PATH = os.getenv('DOWNLOAD_PATH')
     
     @classmethod
