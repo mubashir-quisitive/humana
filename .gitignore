@@ -208,3 +208,6 @@ __marimo__/
 
 # Temp folder
 temp/
+
+# Track folder
+track/

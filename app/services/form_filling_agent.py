@@ -3,6 +3,7 @@ from browser_use import Agent, ChatAzureOpenAI, Controller, ActionResult
 from browser_use.browser import BrowserSession
 from app.utils.logger import logger
 from app.utils.config import Config
+from app.utils.agent_tracker import agent_tracker
 
 # Create controller for custom actions
 controller = Controller()
@@ -97,7 +98,7 @@ async def download_file(index: int, browser_session: BrowserSession):
         logger.error(f'Download failed: {str(e)}')
         return ActionResult(error=f'Failed to download file: {str(e)}')
 
-async def run_humana_form_filling_agent(data_from_dataverse):
+async def run_humana_form_filling_agent(data_from_dataverse, request_id: str):
     """Run the Humana form-filling agent"""
     
     logger.section("🔐 FORM FILLING AGENT CONFIGURATION")
@@ -153,6 +154,7 @@ DETAILED UPLOAD INSTRUCTIONS:
 - Wait for the upload to complete before proceeding to the next field
 """
     
+    agent_tracker.log_action(request_id, "🤖 Initializing form filling agent")
     logger.progress("🤖 Initializing form filling agent...")
     agent = Agent(
         task=task_prompt,
@@ -160,7 +162,9 @@ DETAILED UPLOAD INSTRUCTIONS:
         controller=controller,
     )
     
-    logger.success("✅ Form filling agent initialized successfully")
+    agent_tracker.log_action(request_id, "✅ Agent initialized successfully")
+    logger.success("✅ Agent initialized successfully")
+    agent_tracker.log_action(request_id, "🚀 Starting browser automation")
     logger.progress("🚀 Starting browser automation...")
     
     await agent.run()
