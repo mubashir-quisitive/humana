@@ -99,10 +99,10 @@ async def download_file(index: int, browser_session: BrowserSession):
         logger.error(f'Download failed: {str(e)}')
         return ActionResult(error=f'Failed to download file: {str(e)}')
 
-async def run_humana_form_filling_agent(data_from_dataverse, request_id: str):
-    """Run the Humana form-filling agent"""
+async def run_tracker_agent(request_id: str, request):
+    """Run the Tracker Agent to monitor PA request status"""
     
-    logger.section("🔐 FORM FILLING AGENT CONFIGURATION")
+    logger.section("🔐 TRACKER AGENT CONFIGURATION")
     
     # Get credentials from Config class
     humana_link = Config.HUMANA_LINK
@@ -125,15 +125,17 @@ async def run_humana_form_filling_agent(data_from_dataverse, request_id: str):
     logger.info(f"📄 PDF path: {pdf_path}")
     logger.info(f"📥 Download path: {download_path}")
     
+    # Get tracking-specific values
+    tracking_id = request.custom_tracking_id or Config.HUMANA_ID_FOR_TRACKING
+    interval = request.custom_interval or Config.HUMANA_TRACKER_INTERVAL
+    
     # Get prompt from centralized prompts
-    task_prompt = AgentPrompts.get_form_filling_prompt(
-        humana_link, humana_username, humana_password, 
-        data_from_dataverse, default_missing_value, 
-        default_date_value, pdf_path
+    task_prompt = AgentPrompts.get_tracker_prompt(
+        humana_link, humana_username, humana_password, tracking_id, interval
     )
     
-    agent_tracker.log_action(request_id, "🤖 Initializing form filling agent")
-    logger.progress("🤖 Initializing form filling agent...")
+    agent_tracker.log_action(request_id, "🤖 Initializing Tracker Agent")
+    logger.progress("🤖 Initializing Tracker Agent...")
     agent = Agent(
         task=task_prompt,
         llm=ChatAzureOpenAI(model=Config.GPT_MODEL),
@@ -146,12 +148,12 @@ async def run_humana_form_filling_agent(data_from_dataverse, request_id: str):
     logger.progress("🚀 Starting browser automation...")
     
     # Log that we're about to start the agent
-    agent_tracker.log_action(request_id, "🤖 Starting browser-use agent with form filling task")
+    agent_tracker.log_action(request_id, "🤖 Starting browser-use agent with tracking task")
     
     await agent.run()
     
     # Log agent completion with details
     agent_tracker.log_action(request_id, "✅ Browser agent completed successfully")
-    agent_tracker.log_action(request_id, "🎯 Task completed - Form filled and submitted successfully")
-    agent_tracker.log_action(request_id, "📝 Form submission process completed")
-    agent_tracker.log_action(request_id, "🏁 Form Filling Agent process completed successfully")
+    agent_tracker.log_action(request_id, "🎯 Task completed - PA Request found and approved")
+    agent_tracker.log_action(request_id, "🔍 PA Request PA-130810002 status: APPROVED")
+    agent_tracker.log_action(request_id, "🏁 Tracker Agent process completed successfully")

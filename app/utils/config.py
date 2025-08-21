@@ -18,6 +18,10 @@ class Config:
     HUMANA_USERNAME = os.getenv('HUMANA_USERNAME')
     HUMANA_PASSWORD = os.getenv('HUMANA_PASSWORD')
     
+    # Tracker Agent Configuration
+    HUMANA_ID_FOR_TRACKING = os.getenv('HUMANA_ID_FOR_TRACKING')
+    HUMANA_TRACKER_INTERVAL = int(os.getenv('HUMANA_TRACKER_INTERVAL', 10))
+    
     # Default Values for Missing Data
     DEFAULT_MISSING_VALUE = os.getenv('DEFAULT_MISSING_VALUE')
     DEFAULT_DATE_VALUE = os.getenv('DEFAULT_DATE_VALUE')
