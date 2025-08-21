@@ -5,6 +5,8 @@ FastAPI service with automated form filling and tracking agents.
 ## Setup
 
 ```bash
+git clone https://github.com/mubashir-quisitive/humana.git
+cd humana
 python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
