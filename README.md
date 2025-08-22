@@ -19,7 +19,7 @@ Create `.env` with:
 # Azure OpenAI Configuration
 AZURE_OPENAI_ENDPOINT=your_endpoint
 AZURE_OPENAI_API_KEY=your_key
-GPT_MODEL=gpt-4.1
+GPT_MODEL=gpt-4.1-mini
 
 # Dataverse Configuration
 CLIENT_ID=your_client_id
