@@ -1,6 +1,5 @@
 import asyncio
-from browser_use import Agent, ChatAzureOpenAI, Controller, ActionResult
-from browser_use.browser import BrowserSession
+from browser_use import Agent, ChatAzureOpenAI, Controller, ActionResult, BrowserSession
 from app.utils.logger import logger
 from app.utils.config import Config
 from app.utils.agent_tracker import agent_tracker
@@ -136,10 +135,15 @@ async def run_tracker_agent(request_id: str, request):
     
     agent_tracker.log_action(request_id, "🤖 Initializing Tracker Agent")
     logger.progress("🤖 Initializing Tracker Agent...")
+    
+    # Create browser session with headless mode
+    browser_session = BrowserSession(headless=Config.HEADLESS_MODE)
+    
     agent = Agent(
         task=task_prompt,
         llm=ChatAzureOpenAI(model=Config.GPT_MODEL),
         controller=controller,
+        browser_session=browser_session,
     )
     
     agent_tracker.log_action(request_id, "✅ Agent initialized successfully")

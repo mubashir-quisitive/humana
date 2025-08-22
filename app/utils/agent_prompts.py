@@ -22,21 +22,32 @@ Your task is to:
 IMPORTANT INSTRUCTIONS:
 - If any required field is not available in the provided data, fill it with "{default_missing_value}"
 - If any date field is not available in the provided data, use "{default_date_value}"
-- Always complete all required fields using these default values when data is missing
+- CRITICAL: All dates must be entered in DD/MM/YYYY format (e.g., 25/08/2025, 01/03/1959)
 - CRITICAL: First Name and Last Name must be entered as SEPARATE fields - do not combine them
 - Use the Member.First_Name value for the First Name field only
 - Use the Member.Last_Name value for the Last Name field only
+- CAREFULLY verify each field index before inputting data - ensure you're filling the correct field
+- Double-check that you're entering data into the right input field for each piece of information
 - For file upload: Use the custom action "Upload file to form element" with the correct index and file_type="pdf"
 - Multiple PDF files are available in: {pdf_path}
-- Available PDF files include: Labs_Renal, PT_Summary, Lumbar_Xray, Clinician_Note
+- The system will automatically use whatever PDF files are found in that folder
 - After completing all form fields, click on the **Submit** button to submit the form
+
+DETAILED FORM FILLING INSTRUCTIONS:
+- CAREFULLY identify each form field by its label and index before entering data
+- For date fields: Always use DD/MM/YYYY format (e.g., 25/08/2025, 01/03/1959)
+- For Member.Date_of_Birth: Convert to DD/MM/YYYY format (e.g., "01/03/1959" for "1959-03-01")
+- For Service.Requested_Start_Date: Convert to DD/MM/YYYY format (e.g., "25/08/2025" for "2025-08-25")
+- Verify you're entering data into the correct field by reading the field label
+- Double-check field indexes match the intended input field
 
 DETAILED UPLOAD INSTRUCTIONS:
 - When you encounter a file upload field, use the custom action "Upload file to form element"
 - Pass the correct element index and file_type="pdf" as parameters
-- The action will automatically select a random PDF file from the available files
-- IMPORTANT: Try to use different PDF files for different upload fields when possible
-- If you encounter multiple file upload fields, use the upload action for each one
+- The action will automatically upload all available PDF files
+- IMPORTANT: Only upload files ONCE per upload field - do not repeat uploads
+- If you see files already uploaded (with replace/remove buttons), DO NOT upload again
+- Look for the actual file upload input field (usually labeled "Upload Files" or similar)
 - No manual intervention needed - the file upload is fully automated
 - Wait for the upload to complete before proceeding to the next field
 

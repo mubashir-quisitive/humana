@@ -31,6 +31,9 @@ class Config:
     PDF_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'temp')
     DOWNLOAD_PATH = os.getenv('DOWNLOAD_PATH')
     
+    # Browser Configuration
+    HEADLESS_MODE = os.getenv('HEADLESS_MODE', 'false').lower() == 'true'
+    
     @classmethod
     def validate(cls):
         required_vars = ['CLIENT_ID', 'CLIENT_SECRET', 'TENANT_ID', 'DATAVERSE_URL', 'TARGET_ACCOUNT_ID']

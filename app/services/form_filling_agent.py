@@ -1,6 +1,5 @@
 import asyncio
-from browser_use import Agent, ChatAzureOpenAI, Controller, ActionResult
-from browser_use.browser import BrowserSession
+from browser_use import Agent, ChatAzureOpenAI, Controller, ActionResult, BrowserSession
 from app.utils.logger import logger
 from app.utils.config import Config
 from app.utils.agent_tracker import agent_tracker
@@ -9,11 +8,21 @@ from app.utils.agent_prompts import AgentPrompts
 # Create controller for custom actions
 controller = Controller()
 
+# Track uploaded files to prevent duplicates
+_uploaded_files = set()
+
 @controller.action('Upload file to form element')
 async def upload_file(index: int, browser_session: BrowserSession, file_type: str = "pdf"):
     """Upload file to specified element index"""
+    global _uploaded_files
     import os
     import random
+    
+    # Check if we've already uploaded files to this index
+    upload_key = f"{index}_{file_type}"
+    if upload_key in _uploaded_files:
+        logger.info(f"📋 Files already uploaded to index {index} for {file_type}")
+        return ActionResult(extracted_content=f"Files already uploaded to index {index}")
     
     if file_type.lower() == "pdf":
         pdf_dir = Config.PDF_PATH
@@ -21,10 +30,9 @@ async def upload_file(index: int, browser_session: BrowserSession, file_type: st
         if os.path.exists(pdf_dir):
             pdf_files = [f for f in os.listdir(pdf_dir) if f.lower().endswith('.pdf')]
             if pdf_files:
-                # Randomly select a PDF file
-                selected_pdf = random.choice(pdf_files)
-                file_path = os.path.join(pdf_dir, selected_pdf)
-                logger.info(f"📄 Selected PDF file for upload: {selected_pdf}")
+                # Use all available PDF files for upload
+                all_pdf_files = [os.path.join(pdf_dir, f) for f in pdf_files]
+                logger.info(f"📄 Available PDF files for upload: {len(pdf_files)} files")
             else:
                 return ActionResult(error='No PDF files found in temp directory')
         else:
@@ -43,10 +51,11 @@ async def upload_file(index: int, browser_session: BrowserSession, file_type: st
 
         # Set up file chooser handler before clicking
         async def handle_file_chooser(file_chooser):
-            # Try to upload multiple files if multiple PDFs are available
+            # Upload multiple files if PDFs are available
             if file_type.lower() == "pdf":
-                all_pdf_files = [os.path.join(pdf_dir, f) for f in pdf_files]
+                logger.info(f"📤 Setting {len(all_pdf_files)} PDF files for upload")
                 await file_chooser.set_files(all_pdf_files)
+                logger.info("✅ PDF files set successfully in file chooser")
             else:
                 await file_chooser.set_files(file_path)
 
@@ -56,14 +65,21 @@ async def upload_file(index: int, browser_session: BrowserSession, file_type: st
         # Click the upload button to trigger file chooser
         await upload_element.click()
 
-        # Wait a moment for the file to be selected
+        # Wait for file chooser to appear and files to be selected
         import asyncio
+        await asyncio.sleep(3)
+        
+        # Additional wait to ensure files are properly uploaded
         await asyncio.sleep(2)
 
         if file_type.lower() == "pdf":
             msg = f'Successfully initiated multiple PDF file upload: {len(pdf_files)} files'
+            # Mark this index as uploaded to prevent duplicates
+            _uploaded_files.add(upload_key)
         else:
             msg = f'Successfully initiated file upload for "{file_path}"'
+            # Mark this index as uploaded to prevent duplicates
+            _uploaded_files.add(upload_key)
         logger.success(msg)
         return ActionResult(extracted_content=msg)
     except Exception as e:
@@ -125,6 +141,10 @@ async def download_file(index: int, browser_session: BrowserSession):
 async def run_humana_form_filling_agent(data_from_dataverse, request_id: str):
     """Run the Humana form-filling agent"""
     
+    # Reset upload tracking for new session
+    global _uploaded_files
+    _uploaded_files.clear()
+    
     logger.section("🔐 FORM FILLING AGENT CONFIGURATION")
     
     # Get credentials from Config class
@@ -157,10 +177,15 @@ async def run_humana_form_filling_agent(data_from_dataverse, request_id: str):
     
     agent_tracker.log_action(request_id, "🤖 Initializing form filling agent")
     logger.progress("🤖 Initializing form filling agent...")
+    
+    # Create browser session with headless mode
+    browser_session = BrowserSession(headless=Config.HEADLESS_MODE)
+    
     agent = Agent(
         task=task_prompt,
         llm=ChatAzureOpenAI(model=Config.GPT_MODEL),
         controller=controller,
+        browser_session=browser_session,
     )
     
     agent_tracker.log_action(request_id, "✅ Agent initialized successfully")
