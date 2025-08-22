@@ -23,6 +23,9 @@ IMPORTANT INSTRUCTIONS:
 - If any required field is not available in the provided data, fill it with "{default_missing_value}"
 - If any date field is not available in the provided data, use "{default_date_value}"
 - Always complete all required fields using these default values when data is missing
+- CRITICAL: First Name and Last Name must be entered as SEPARATE fields - do not combine them
+- Use the Member.First_Name value for the First Name field only
+- Use the Member.Last_Name value for the Last Name field only
 - For file upload: Use the custom action "Upload file to form element" with the correct index and file_type="pdf"
 - Multiple PDF files are available in: {pdf_path}
 - Available PDF files include: Labs_Renal, PT_Summary, Lumbar_Xray, Clinician_Note
@@ -39,10 +42,15 @@ DETAILED UPLOAD INSTRUCTIONS:
 
 SUBMISSION COMPLETION INSTRUCTIONS:
 - After clicking Submit, wait until the form successfully submitted screen appears
-- Once the success screen is visible, log all the information that is returned/displayed on that screen
-- Remain on the success screen for a few seconds to ensure the submission is fully processed
-- Only after waiting a few seconds on the success screen, consider your task complete and finish
-- Do not close the browser or navigate away until you have logged the success information and waited the required time
+- Once the success screen is visible, wait for all details to fully load and display
+- The success screen may initially show "Loading..." for confirmation numbers and details
+- CRITICAL: Wait patiently until the actual confirmation number, patient details, service details, and other information appear
+- DO NOT PROCEED until all "Loading..." placeholders are replaced with actual information
+- After all details are visible, wait additional time for user review and confirmation
+- REMAIN ON THE SUCCESS SCREEN until all actual information is displayed and logged
+- DO NOT CLOSE THE BROWSER or navigate away until you have captured the real confirmation details
+- If you see "Loading..." placeholders, keep waiting - do not complete the task
+- The success screen takes time to load - be patient and wait as long as necessary
 """
 
     @staticmethod

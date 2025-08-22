@@ -16,7 +16,7 @@ class FormSubmissionRequest(BaseModel):
                             "ID_Number": "HMA-45893-2",
                             "First_Name": "Suzie",
                             "Last_Name": "Smith",
-                            "Date_of_Birth": "01/03/1959",
+                            "Date_of_Birth": "03/01/1959",
                             "Country": "USA",
                             "Postal_Code": 40202,
                             "Zip_Code": 40202
@@ -30,7 +30,7 @@ class FormSubmissionRequest(BaseModel):
                             "CPT_Code": 72148,
                             "Description": "MRI Lumbar Spine w/o Contrast",
                             "Place_of_Service": "Outpatient",
-                            "Requested_Start_Date": "08/25/2025",
+                            "Requested_Start_Date": "25/08/2025",
                             "Duration_in_Days": 1,
                             "Priority": "Routine"
                         },
